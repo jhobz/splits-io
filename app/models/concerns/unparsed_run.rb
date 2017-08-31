@@ -135,7 +135,7 @@ module UnparsedRun
         )
       end
 
-      RunsChannel.broadcast_to(self, {parsed: true})
+      RunsChannel.broadcast_to(self, {parsed_at: parsed_at})
     end
 
     def write_segments(parsed_segments)

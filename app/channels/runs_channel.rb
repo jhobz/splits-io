@@ -1,5 +1,9 @@
 class RunsChannel < ApplicationCable::Channel
   def subscribed
-    stream_for Run.find36(params[:run_id])
+    run = Run.find36(params[:run_id])
+    stream_for(run)
+  end
+
+  def unsubscribed
   end
 end
