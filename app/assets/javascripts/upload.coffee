@@ -26,7 +26,6 @@ $ ->
           contentType: false
           data: formData
           success: ->
-            $("#droplabel").html "parsing..."
             window.location = response.uris.claim_uri unless options.bulk
           error: (xhr, textStatus) ->
             window.isUploading = false

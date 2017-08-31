@@ -134,6 +134,8 @@ module UnparsedRun
           gametime_sum_of_best_ms: sum_of_best_milliseconds,
         )
       end
+
+      RunsChannel.broadcast_to(self, {parsed: true})
     end
 
     def write_segments(parsed_segments)

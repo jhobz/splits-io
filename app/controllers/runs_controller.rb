@@ -14,13 +14,13 @@ class RunsController < ApplicationController
 
   def show
     if params['reparse'] == '1'
-      @run.parse_into_activerecord
+      @run.delay.parse_into_activerecord
       redirect_to run_path(@run)
       return
     end
 
     if @run.parsed_at.nil?
-      @run.parse_into_activerecord
+      @run.delay.parse_into_activerecord
     end
 
     # Catch bad runs
@@ -42,7 +42,7 @@ class RunsController < ApplicationController
     end
 
     if params['reparse'] == '1'
-      @run.parse_into_activerecord
+      @run.delay.parse_into_activerecord
       redirect_to edit_run_path(@run), notice: 'Reparse complete. It might take a minute for your run to update.'
       return
     end
@@ -177,21 +177,22 @@ class RunsController < ApplicationController
 
   def set_run
     @run = Run.find_by(id: params[:run].to_i(36)) || Run.find_by!(nick: params[:run])
-    @run.parse_into_activerecord unless @run.parsed?
-    timing = params[:timing] || @run.default_timing
+    if @run.parsed?
+      timing = params[:timing] || @run.default_timing
 
-    gon.run = {id: @run.id36, splits: @run.collapsed_segments(timing)}
+      gon.run = {id: @run.id36, splits: @run.collapsed_segments(timing)}
 
-    if @run.user.nil?
-      gon.run['user'] = nil
-    else
-      gon.run['user'] = {
-        id: @run.user.id,
-        name: @run.user.name
-      }
+      if @run.user.nil?
+        gon.run['user'] = nil
+      else
+        gon.run['user'] = {
+          id: @run.user.id,
+          name: @run.user.name
+        }
+      end
+
+      gon.scale_to = @run.duration_ms(timing)
     end
-
-    gon.scale_to = @run.duration_ms(timing)
   rescue ActionController::UnknownFormat, ActiveRecord::RecordNotFound
     render :not_found, status: 404
   end

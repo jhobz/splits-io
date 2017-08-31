@@ -1,20 +1,23 @@
 - title(@run)
 - timing = params[:timing] || @run.default_timing
 
-- content_for(:header) do
-  - if @run.game.present? && @run.category.present?
-    ul.breadcrumb
-      li = link_to "Games", games_path
-      li = link_to @run.game, game_path(@run.game)
-      li = link_to @run.category, game_category_path(@run.game, @run.category)
-      li = link_to @run.id36, run_path(@run)
-  = render partial: 'runs/title', locals: {run: @run, timing: timing}
+- if !@run.parsed?
+  article This run is queued for parsing and will complete soon. This page will automatically refresh.
+- else
+  - content_for(:header) do
+    - if @run.game.present? && @run.category.present?
+      ul.breadcrumb
+        li = link_to "Games", games_path
+        li = link_to @run.game, game_path(@run.game)
+        li = link_to @run.category, game_category_path(@run.game, @run.category)
+        li = link_to @run.id36, run_path(@run)
+    = render partial: 'runs/title', locals: {run: @run, timing: timing}
 
-= render partial: 'runs/full_timeline', locals: {run: @run, timing: timing}
+  = render partial: 'runs/full_timeline', locals: {run: @run, timing: timing}
 
-article
-  = render partial: 'runs/split_table', locals: {\
-    short: @run.short?,\
-    run: @run,\
-    timing: timing\
-  }
+  article
+    = render partial: 'runs/split_table', locals: {\
+      short: @run.short?,\
+      run: @run,\
+      timing: timing\
+    }

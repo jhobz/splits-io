@@ -112,6 +112,7 @@ gem 'versionomy'
 gem 'xml-simple'
 
 # server/environment
+gem 'faye-websocket'
 gem 'figaro'
 gem 'rails', '~> 5'
 gem 'thin'
